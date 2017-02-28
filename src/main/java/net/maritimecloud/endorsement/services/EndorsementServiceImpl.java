@@ -20,6 +20,7 @@ import net.maritimecloud.endorsement.model.Endorsement;
 import net.maritimecloud.endorsement.repositories.EndorsementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,10 +37,12 @@ public class EndorsementServiceImpl implements EndorsementService {
         return this.endorsementRepository.findByServiceMrnAndServiceLevel(serviceMrn, serviceLevel);
     }
 
+    @Transactional
     public Endorsement saveEndorsement(Endorsement endorsement) {
         return this.endorsementRepository.save(endorsement);
     }
 
+    @Transactional
     public void deleteEndorsement(Endorsement endorsement) {
         this.endorsementRepository.delete(endorsement);
     }

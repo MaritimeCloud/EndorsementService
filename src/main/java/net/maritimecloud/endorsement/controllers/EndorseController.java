@@ -42,7 +42,13 @@ public class EndorseController {
     @ResponseBody
     @PreAuthorize("@accessControlUtil.hasAccessToOrg(#input.getOrgMrn())")
     public ResponseEntity<Endorsement> createEndorment(HttpServletRequest request, @Valid @RequestBody Endorsement input) {
-        Endorsement endorsement = endorsementService.saveEndorsement(endorsementService.saveEndorsement(input));
+        Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrn(input.getOrgMrn(), input.getServiceMrn());
+        if (endorsement != null) {
+            endorsement.setUserMrn(input.getUserMrn());
+            endorsementService.saveEndorsement(endorsement);
+        } else {
+            endorsement = endorsementService.saveEndorsement(input);
+        }
         return new ResponseEntity<>(endorsement, HttpStatus.OK);
     }
 
@@ -74,7 +80,7 @@ public class EndorseController {
     public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String serviceMrn) {
         String orgMrn = "";
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrn(orgMrn, serviceMrn);
-        if (!serviceLevel.equals(endorsement.getServiceLevel())) {
+        if (endorsement == null || !serviceLevel.equals(endorsement.getServiceLevel())) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         endorsementService.deleteEndorsement(endorsement);

@@ -35,7 +35,7 @@ import java.util.Map;
 @Component("accessControlUtil")
 public class AccessControlUtil {
 
-    @Autowired
+    //@Autowired
     //private HasRoleUtil hasRoleUtil;
     public static final String ORG_PROPERTY_NAME = "org";
     public static final String PERMISSIONS_PROPERTY_NAME = "permissions";
