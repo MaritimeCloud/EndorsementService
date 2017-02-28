@@ -20,9 +20,11 @@ import net.maritimecloud.endorsement.services.EndorsementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -38,10 +40,10 @@ public class EndorseController {
             method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    //@PreAuthorize("hasRole('ORG_ADMIN') and @accessControlUtil.hasAccessToOrg(#orgMrn)")
-    public ResponseEntity<Endorsement> createEndorment(HttpServletRequest request, @RequestBody Endorsement input) {
+    @PreAuthorize("@accessControlUtil.hasAccessToOrg(#input.getOrgMrn())")
+    public ResponseEntity<Endorsement> createEndorment(HttpServletRequest request, @Valid @RequestBody Endorsement input) {
         Endorsement endorsement = endorsementService.saveEndorsement(endorsementService.saveEndorsement(input));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(endorsement, HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -49,19 +51,18 @@ public class EndorseController {
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    //@PreAuthorize("hasRole('ORG_ADMIN') and @accessControlUtil.hasAccessToOrg(#orgMrn)")
     public ResponseEntity<List<Endorsement>> getEndormentsByServiceMrn(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String serviceMrn) {
-        List<Endorsement> endorsements = endorsementService.listByServiceMrnAndServiceLevel(serviceLevel, serviceMrn);
+        List<Endorsement> endorsements = endorsementService.listByServiceMrnAndServiceLevel(serviceMrn, serviceLevel);
         return new ResponseEntity<>(endorsements, HttpStatus.OK);
     }
 
     @RequestMapping(
-            value = "/endorsements/{serviceLevel}/{orgMrn}",
+            value = "/endorsements-by/{serviceLevel}/{orgMrn}",
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public ResponseEntity<List<Endorsement>> getEndormentsByOrgMrn(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String orgMrn) {
-        List<Endorsement> endorsements = endorsementService.listByOrgMrnAndServiceLevel(serviceLevel, orgMrn);
+        List<Endorsement> endorsements = endorsementService.listByOrgMrnAndServiceLevel(orgMrn, serviceLevel);
         return new ResponseEntity<>(endorsements, HttpStatus.OK);
     }
 
@@ -69,6 +70,7 @@ public class EndorseController {
             value = "/endorsements/{serviceLevel}/{serviceMrn}",
             method = RequestMethod.DELETE)
     @ResponseBody
+    @PreAuthorize("@accessControlUtil.hasAccessToOrg(#input.getOrgMrn())")
     public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String serviceMrn) {
         String orgMrn = "";
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrn(orgMrn, serviceMrn);

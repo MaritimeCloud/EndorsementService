@@ -15,6 +15,9 @@
  */
 package net.maritimecloud.endorsement.model;
 
+import net.maritimecloud.endorsement.validators.MRN;
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -26,18 +29,26 @@ public class Endorsement extends TimestampModel {
     public Endorsement() {
     }
 
+    @MRN
+    @NotBlank
     @Column(name = "service_mrn")
     private String serviceMrn;
 
+    @MRN
+    @NotBlank
     @Column(name = "org_mrn")
     private String orgMrn;
 
+    @NotBlank
     @Column(name = "org_name")
     private String orgName;
 
+    @MRN
+    @NotBlank
     @Column(name = "user_mrn")
     private String userMrn;
 
+    @NotBlank
     @Column(name = "service_level")
     private String serviceLevel;
 
