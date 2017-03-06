@@ -15,6 +15,10 @@
  */
 package net.maritimecloud.endorsement.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import net.maritimecloud.endorsement.validators.MRN;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -22,6 +26,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@EqualsAndHashCode(exclude={"id"})
+@ToString
 @Entity
 @Table(name="endorsements")
 public class Endorsement extends TimestampModel {
@@ -29,66 +35,37 @@ public class Endorsement extends TimestampModel {
     public Endorsement() {
     }
 
+    @Getter
+    @Setter
     @MRN
     @NotBlank
     @Column(name = "service_mrn")
     private String serviceMrn;
 
+    @Getter
+    @Setter
     @MRN
     @NotBlank
     @Column(name = "org_mrn")
     private String orgMrn;
 
+    @Getter
+    @Setter
     @NotBlank
     @Column(name = "org_name")
     private String orgName;
 
+    @Getter
+    @Setter
     @MRN
     @NotBlank
     @Column(name = "user_mrn")
     private String userMrn;
 
+    @Getter
+    @Setter
     @NotBlank
     @Column(name = "service_level")
     private String serviceLevel;
 
-    public String getServiceMrn() {
-        return serviceMrn;
-    }
-
-    public void setServiceMrn(String serviceMrn) {
-        this.serviceMrn = serviceMrn;
-    }
-
-    public String getServiceLevel() {
-        return serviceLevel;
-    }
-
-    public void setServiceLevel(String serviceLevel) {
-        this.serviceLevel = serviceLevel;
-    }
-
-    public String getOrgMrn() {
-        return orgMrn;
-    }
-
-    public void setOrgMrn(String orgMrn) {
-        this.orgMrn = orgMrn;
-    }
-
-    public String getOrgName() {
-        return orgName;
-    }
-
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
-
-    public String getUserMrn() {
-        return userMrn;
-    }
-
-    public void setUserMrn(String userMrn) {
-        this.userMrn = userMrn;
-    }
 }

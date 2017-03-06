@@ -19,6 +19,9 @@ package net.maritimecloud.endorsement.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,15 +30,21 @@ import java.util.Date;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @MappedSuperclass
 public abstract class TimestampModel {
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     protected Long id;
 
+    @Getter
+    @Setter
     @Column(name = "created_at", updatable=false)
     protected Date createdAt;
 
+    @Getter
+    @Setter
     @Column(name = "updated_at")
     protected Date updatedAt;
 
@@ -49,22 +58,6 @@ public abstract class TimestampModel {
     @PreUpdate
     void updatedAt() {
         this.updatedAt = new Date();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    protected void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
     }
 
 }
