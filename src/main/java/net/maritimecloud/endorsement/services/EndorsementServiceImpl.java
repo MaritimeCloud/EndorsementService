@@ -19,6 +19,8 @@ package net.maritimecloud.endorsement.services;
 import net.maritimecloud.endorsement.model.Endorsement;
 import net.maritimecloud.endorsement.repositories.EndorsementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +31,12 @@ public class EndorsementServiceImpl implements EndorsementService {
     @Autowired
     private EndorsementRepository endorsementRepository;
 
-    public List<Endorsement> listByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel) {
-        return this.endorsementRepository.findByOrgMrnAndServiceLevel(orgMrn, serviceLevel);
+    public Page<Endorsement> listByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable) {
+        return this.endorsementRepository.findByOrgMrnAndServiceLevel(orgMrn, serviceLevel, pageable);
     }
 
-    public List<Endorsement> listByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel) {
-        return this.endorsementRepository.findByServiceMrnAndServiceLevel(serviceMrn, serviceLevel);
+    public Page<Endorsement> listByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel, Pageable pageable) {
+        return this.endorsementRepository.findByServiceMrnAndServiceLevel(serviceMrn, serviceLevel, pageable);
     }
 
     @Transactional

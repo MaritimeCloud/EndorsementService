@@ -15,6 +15,7 @@
  */
 package net.maritimecloud.endorsement.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,33 +40,34 @@ public class Endorsement extends TimestampModel {
     @Setter
     @MRN
     @NotBlank
-    @Column(name = "service_mrn")
+    @Column(name = "service_mrn", nullable = false)
     private String serviceMrn;
 
     @Getter
     @Setter
     @MRN
     @NotBlank
-    @Column(name = "org_mrn")
+    @Column(name = "org_mrn", nullable = false)
     private String orgMrn;
 
     @Getter
     @Setter
     @NotBlank
-    @Column(name = "org_name")
+    @Column(name = "org_name", nullable = false)
     private String orgName;
 
     @Getter
     @Setter
     @MRN
     @NotBlank
-    @Column(name = "user_mrn")
+    @Column(name = "user_mrn", nullable = false)
     private String userMrn;
 
     @Getter
     @Setter
     @NotBlank
-    @Column(name = "service_level")
+    @ApiModelProperty(required = true, value = "The level being endorsed", allowableValues = "specification, design, instance")
+    @Column(name = "service_level", nullable = false)
     private String serviceLevel;
 
 }

@@ -37,7 +37,7 @@ public class SwaggerConfig {
                 .apiInfo(getApiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.regex("/(oidc|x509)/endorsements/.*"))
+                .paths(PathSelectors.regex("/(oidc|x509)/endorse.*"))
                 .build();
     }
 

@@ -18,12 +18,14 @@ package net.maritimecloud.endorsement.services;
 
 
 import net.maritimecloud.endorsement.model.Endorsement;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface EndorsementService {
-    List<Endorsement> listByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel);
-    List<Endorsement> listByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel);
+    Page<Endorsement> listByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
+    Page<Endorsement> listByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel, Pageable pageable);
     Endorsement saveEndorsement(Endorsement endorsement);
     void deleteEndorsement(Endorsement endorsement);
     Endorsement getByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);

@@ -16,6 +16,7 @@
 
 package net.maritimecloud.endorsement.config;
 
+import net.maritimecloud.endorsement.utils.AccessControlUtil;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter;
@@ -42,6 +43,12 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
+    @Bean
+    public AccessControlUtil accessControlUtil() {
+        return new AccessControlUtil();
+    }
+
     @Configuration
     @Order(1)
     public static class OIDCWebSecurityConfigurationAdapter extends KeycloakWebSecurityConfigurerAdapter
@@ -76,16 +83,17 @@ public class SecurityConfig {
         {
             super.configure(http);
             http
-                    .addFilterBefore(new SimpleCorsFilter(), ChannelProcessingFilter.class)
-                    .csrf().disable()
-                    .requestMatchers()
+                .addFilterBefore(new SimpleCorsFilter(), ChannelProcessingFilter.class)
+                .csrf().disable()
+                .requestMatchers()
                     .antMatchers("/oidc/**","/sso/**") // "/sso/**" matches the urls used by the keycloak adapter
-                    .and()
-                    .authorizeRequests()
+            .and()
+                .authorizeRequests()
                     //.expressionHandler(webExpressionHandler())
                     // Some general filters for access, more specific ones are set at each method
                     .antMatchers(HttpMethod.POST, "/oidc/endorsements").authenticated()
                     .antMatchers(HttpMethod.GET, "/oidc/endorsements/**").authenticated()
+                    .antMatchers(HttpMethod.GET, "/oidc/endorsements-by/**").authenticated()
                     .antMatchers(HttpMethod.DELETE, "/oidc/endorsements/**").authenticated()
             ;
         }

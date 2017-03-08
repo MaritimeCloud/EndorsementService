@@ -17,12 +17,12 @@
 package net.maritimecloud.endorsement.repositories;
 
 import net.maritimecloud.endorsement.model.Endorsement;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
-
-public interface EndorsementRepository extends CrudRepository<Endorsement, Long> {
-    List<Endorsement> findByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel);
-    List<Endorsement> findByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel);
+public interface EndorsementRepository extends PagingAndSortingRepository<Endorsement, Long> {
+    Page<Endorsement> findByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
+    Page<Endorsement> findByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel, Pageable pageable);
     Endorsement findByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);
 }
