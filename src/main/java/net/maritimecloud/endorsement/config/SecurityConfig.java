@@ -53,22 +53,11 @@ public class SecurityConfig {
     @Order(1)
     public static class OIDCWebSecurityConfigurationAdapter extends KeycloakWebSecurityConfigurerAdapter
     {
-        /**
-         * Registers the MCKeycloakAuthenticationProvider with the authentication manager.
-         */
-        /*@Autowired
+        @Autowired
         public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-            auth.authenticationProvider(mcKeycloakAuthenticationProvider());
-        }*/
+            auth.authenticationProvider(keycloakAuthenticationProvider());
+        }
 
-        /*@Bean
-        protected MCKeycloakAuthenticationProvider mcKeycloakAuthenticationProvider() {
-            return new MCKeycloakAuthenticationProvider();
-        }*/
-
-        /**
-         * Defines the session authentication strategy.
-         */
         @Bean
         @Override
         protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
@@ -89,7 +78,6 @@ public class SecurityConfig {
                     .antMatchers("/oidc/**","/sso/**") // "/sso/**" matches the urls used by the keycloak adapter
             .and()
                 .authorizeRequests()
-                    //.expressionHandler(webExpressionHandler())
                     // Some general filters for access, more specific ones are set at each method
                     .antMatchers(HttpMethod.POST, "/oidc/endorsements").authenticated()
                     .antMatchers(HttpMethod.GET, "/oidc/endorsements/**").authenticated()
@@ -113,31 +101,5 @@ public class SecurityConfig {
             registrationBean.setEnabled(false);
             return registrationBean;
         }
-
-        /*@Bean
-        public RoleHierarchy roleHierarchy() {
-            RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-            // If the hierarchy is changed, remember to update the hierarchy below and the list in
-            // net.maritimecloud.identityregistry.controllers.RoleController:getAvailableRoles()
-            roleHierarchy.setHierarchy("ROLE_SITE_ADMIN > ROLE_APPROVE_ORG\n" +
-                    "ROLE_SITE_ADMIN > ROLE_ORG_ADMIN\n" +
-                    "ROLE_ORG_ADMIN > ROLE_ENTITY_ADMIN\n" +
-                    "ROLE_ENTITY_ADMIN > ROLE_USER_ADMIN\n" +
-                    "ROLE_ENTITY_ADMIN > ROLE_VESSEL_ADMIN\n" +
-                    "ROLE_ENTITY_ADMIN > ROLE_SERVICE_ADMIN\n" +
-                    "ROLE_ENTITY_ADMIN > ROLE_DEVICE_ADMIN\n" +
-                    "ROLE_USER_ADMIN > ROLE_USER\n" +
-                    "ROLE_VESSEL_ADMIN > ROLE_USER\n" +
-                    "ROLE_SERVICE_ADMIN > ROLE_USER\n" +
-                    "ROLE_DEVICE_ADMIN > ROLE_USER");
-            return roleHierarchy;
-        }
-
-        private SecurityExpressionHandler<FilterInvocation> webExpressionHandler() {
-            DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
-            defaultWebSecurityExpressionHandler.setRoleHierarchy(roleHierarchy());
-            return defaultWebSecurityExpressionHandler;
-        }*/
     }
-
 }
