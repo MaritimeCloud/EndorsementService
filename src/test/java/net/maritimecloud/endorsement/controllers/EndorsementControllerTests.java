@@ -17,7 +17,7 @@
 package net.maritimecloud.endorsement.controllers;
 
 
-import net.maritimecloud.endorsement.model.Endorsement;
+import net.maritimecloud.endorsement.model.db.Endorsement;
 import net.maritimecloud.endorsement.services.EndorsementService;
 import net.maritimecloud.endorsement.utils.AccessControlUtil;
 import org.junit.Before;
@@ -28,10 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;

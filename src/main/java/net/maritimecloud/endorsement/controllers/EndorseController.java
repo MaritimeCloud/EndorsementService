@@ -15,7 +15,8 @@
  */
 package net.maritimecloud.endorsement.controllers;
 
-import net.maritimecloud.endorsement.model.Endorsement;
+import net.maritimecloud.endorsement.model.data.EndorsementList;
+import net.maritimecloud.endorsement.model.db.Endorsement;
 import net.maritimecloud.endorsement.services.EndorsementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,6 +42,7 @@ public class EndorseController {
     @RequestMapping(
             value = "/endorsements",
             method = RequestMethod.POST,
+            consumes = "application/json;charset=UTF-8",
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     @PreAuthorize("@accessControlUtil.hasAccessToOrg(#input.getOrgMrn())")
@@ -63,14 +66,27 @@ public class EndorseController {
         return endorsementService.listByServiceMrn(serviceMrn, pageable);
     }
 
-    /*@RequestMapping(
-            value = "/endorsement-list/",
+    @RequestMapping(
+            value = "/endorsement-list",
             method = RequestMethod.POST,
+            consumes = "application/json;charset=UTF-8",
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Page<Endorsement> getEndormentsByServiceMrns(HttpServletRequest request, @RequestBody List<String> serviceMrns, Pageable pageable) {
-        return endorsementService.listByServiceMrns(serviceMrns, pageable);
-    }*/
+    public List<EndorsementList> getEndormentsByServiceMrns(HttpServletRequest request, @RequestBody List<String> serviceMrns) {
+        List<EndorsementList> endorsementLists = new ArrayList<>();
+        if (serviceMrns == null || serviceMrns.isEmpty()) {
+            System.out.println("serviceMrns is empty!!");
+            return endorsementLists;
+        }
+        for(String serviceMrn : serviceMrns) {
+            System.out.println("serviceMrn: " + serviceMrn);
+            EndorsementList endorsementList = new EndorsementList();
+            endorsementList.setServiceMrn(serviceMrn);
+            endorsementList.setEndorsements(endorsementService.listByServiceMrn(serviceMrn));
+            endorsementLists.add(endorsementList);
+        }
+        return endorsementLists;
+    }
 
     @RequestMapping(
             value = "/endorsements-by/{serviceLevel}/{orgMrn}",

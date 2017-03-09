@@ -14,22 +14,19 @@
  *  limitations under the License.
  */
 
-package net.maritimecloud.endorsement.model;
+package net.maritimecloud.endorsement.model.db;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import net.maritimecloud.endorsement.model.JsonSerializable;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
 @MappedSuperclass
-public abstract class TimestampModel {
+public abstract class TimestampModel implements JsonSerializable {
     @Getter
     @Setter(AccessLevel.PROTECTED)
     @JsonIgnore

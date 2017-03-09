@@ -16,7 +16,7 @@
 
 package net.maritimecloud.endorsement.repositories;
 
-import net.maritimecloud.endorsement.model.Endorsement;
+import net.maritimecloud.endorsement.model.db.Endorsement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -26,6 +26,7 @@ import java.util.List;
 public interface EndorsementRepository extends PagingAndSortingRepository<Endorsement, Long> {
     Page<Endorsement> findByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
     Page<Endorsement> findByServiceMrn(String serviceMrn, Pageable pageable);
+    List<Endorsement> findByServiceMrn(String serviceMrn);
     Endorsement findByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);
     Page<Endorsement> findByParentMrn(String parentMrn, Pageable pageable);
     Page<Endorsement> findByParentMrnAndOrgMrn(String parentMrn, String orgMrn, Pageable pageable);
