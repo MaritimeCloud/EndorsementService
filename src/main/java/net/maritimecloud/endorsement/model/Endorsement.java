@@ -27,7 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@EqualsAndHashCode(exclude={"id"})
+@EqualsAndHashCode(exclude={"id", "createdAt", "updatedAt"})
 @ToString
 @Entity
 @Table(name="endorsements")
@@ -65,9 +65,13 @@ public class Endorsement extends TimestampModel {
 
     @Getter
     @Setter
+    @Column(name = "parent_mrn")
+    private String parentMrn;
+
+    @Getter
+    @Setter
     @NotBlank
     @ApiModelProperty(required = true, value = "The level being endorsed", allowableValues = "specification, design, instance")
     @Column(name = "service_level", nullable = false)
     private String serviceLevel;
-
 }

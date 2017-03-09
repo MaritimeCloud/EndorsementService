@@ -23,6 +23,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface EndorsementRepository extends PagingAndSortingRepository<Endorsement, Long> {
     Page<Endorsement> findByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
-    Page<Endorsement> findByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel, Pageable pageable);
+    Page<Endorsement> findByServiceMrn(String serviceMrn, Pageable pageable);
     Endorsement findByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);
+    Page<Endorsement> findByParentMrn(String parentMrn, Pageable pageable);
 }

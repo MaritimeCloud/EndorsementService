@@ -25,7 +25,8 @@ import java.util.List;
 
 public interface EndorsementService {
     Page<Endorsement> listByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
-    Page<Endorsement> listByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel, Pageable pageable);
+    Page<Endorsement> listByServiceMrn(String serviceMrn, Pageable pageable);
+    Page<Endorsement> listByParentMrn(String serviceMrn, Pageable pageable);
     Endorsement saveEndorsement(Endorsement endorsement);
     void deleteEndorsement(Endorsement endorsement);
     Endorsement getByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);

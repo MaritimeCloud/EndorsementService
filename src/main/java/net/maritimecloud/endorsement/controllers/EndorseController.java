@@ -55,12 +55,12 @@ public class EndorseController {
     }
 
     @RequestMapping(
-            value = "/endorsements/{serviceLevel}/{serviceMrn}",
+            value = "/endorsements/{serviceMrn}",
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Page<Endorsement> getEndormentsByServiceMrn(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String serviceMrn, Pageable pageable) {
-        return endorsementService.listByServiceMrnAndServiceLevel(serviceMrn, serviceLevel, pageable);
+    public Page<Endorsement> getEndormentsByServiceMrn(HttpServletRequest request, @PathVariable String serviceMrn, Pageable pageable) {
+        return endorsementService.listByServiceMrn(serviceMrn, pageable);
     }
 
     @RequestMapping(
@@ -73,18 +73,38 @@ public class EndorseController {
     }
 
     @RequestMapping(
-            value = "/endorsements/{serviceLevel}/{serviceMrn}",
+            value = "/endorsements/{serviceMrn}/{orgMrn}",
             method = RequestMethod.DELETE)
     @ResponseBody
-    //@PreAuthorize("@accessControlUtil.hasAccessToOrg(#input.getOrgMrn())")
-    public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String serviceMrn) {
-        String orgMrn = "";
+    @PreAuthorize("@accessControlUtil.hasAccessToOrg(#orgMrn)")
+    public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceMrn, String orgMrn) {
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrn(orgMrn, serviceMrn);
-        if (endorsement == null || !serviceLevel.equals(endorsement.getServiceLevel())) {
+        if (endorsement == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         endorsementService.deleteEndorsement(endorsement);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(
+            value = "/endorsement-by/{serviceMrn}/{orgMrn}",
+            method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public ResponseEntity<?> getEndorsment(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String orgMrn) {
+        Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrn(orgMrn, serviceMrn);
+        if (endorsement == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(endorsement, HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "/endorsed-children/{parentMrn}",
+            method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Page<Endorsement> getEndorsedByParentMrn(HttpServletRequest request, @PathVariable String parentMrn, Pageable pageable) {
+        return endorsementService.listByParentMrn(parentMrn, pageable);
+    }
 }

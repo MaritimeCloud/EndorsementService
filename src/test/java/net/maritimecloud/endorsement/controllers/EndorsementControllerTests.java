@@ -82,7 +82,7 @@ public class EndorsementControllerTests {
     public void testAccessGetServiceWithoutAuthentication() {
         given(this.endorsementService.listByOrgMrnAndServiceLevel("urn:mrn:mcl:org:dma", "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
         try {
-            mvc.perform(get("/oidc/endorsements/instance/urn:mrn:mcl:org:dma").header("Origin", "bla")).andExpect(status().isUnauthorized());
+            mvc.perform(get("/oidc/endorsements-by/instance/urn:mrn:mcl:org:dma").header("Origin", "bla")).andExpect(status().isUnauthorized());
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(false);
@@ -98,7 +98,7 @@ public class EndorsementControllerTests {
 
         given(this.endorsementService.listByOrgMrnAndServiceLevel("urn:mrn:mcl:org:dma", "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
         try {
-            mvc.perform(get("/oidc/endorsements/instance/urn:mrn:mcl:org:dma").with(authentication(auth)).header("Origin", "bla")).andExpect(status().isOk());
+            mvc.perform(get("/oidc/endorsements-by/instance/urn:mrn:mcl:org:dma").with(authentication(auth)).header("Origin", "bla")).andExpect(status().isOk());
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(false);

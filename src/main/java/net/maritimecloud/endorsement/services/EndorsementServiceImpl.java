@@ -35,8 +35,8 @@ public class EndorsementServiceImpl implements EndorsementService {
         return this.endorsementRepository.findByOrgMrnAndServiceLevel(orgMrn, serviceLevel, pageable);
     }
 
-    public Page<Endorsement> listByServiceMrnAndServiceLevel(String serviceMrn, String serviceLevel, Pageable pageable) {
-        return this.endorsementRepository.findByServiceMrnAndServiceLevel(serviceMrn, serviceLevel, pageable);
+    public Page<Endorsement> listByServiceMrn(String serviceMrn, Pageable pageable) {
+        return this.endorsementRepository.findByServiceMrn(serviceMrn, pageable);
     }
 
     @Transactional
@@ -52,4 +52,9 @@ public class EndorsementServiceImpl implements EndorsementService {
     public Endorsement getByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn) {
         return this.endorsementRepository.findByOrgMrnAndServiceMrn(orgMrn, serviceMrn);
     }
+
+    public Page<Endorsement> listByParentMrn(String parentMrn, Pageable pageable) {
+        return this.endorsementRepository.findByParentMrn(parentMrn, pageable);
+    }
+
 }
