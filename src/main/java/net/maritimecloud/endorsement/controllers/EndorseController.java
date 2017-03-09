@@ -75,11 +75,9 @@ public class EndorseController {
     public List<EndorsementList> getEndormentsByServiceMrns(HttpServletRequest request, @RequestBody List<String> serviceMrns) {
         List<EndorsementList> endorsementLists = new ArrayList<>();
         if (serviceMrns == null || serviceMrns.isEmpty()) {
-            System.out.println("serviceMrns is empty!!");
             return endorsementLists;
         }
         for(String serviceMrn : serviceMrns) {
-            System.out.println("serviceMrn: " + serviceMrn);
             EndorsementList endorsementList = new EndorsementList();
             endorsementList.setServiceMrn(serviceMrn);
             endorsementList.setEndorsements(endorsementService.listByServiceMrn(serviceMrn));
