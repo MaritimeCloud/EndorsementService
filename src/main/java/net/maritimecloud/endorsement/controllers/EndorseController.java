@@ -63,6 +63,15 @@ public class EndorseController {
         return endorsementService.listByServiceMrn(serviceMrn, pageable);
     }
 
+    /*@RequestMapping(
+            value = "/endorsement-list/",
+            method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Page<Endorsement> getEndormentsByServiceMrns(HttpServletRequest request, @RequestBody List<String> serviceMrns, Pageable pageable) {
+        return endorsementService.listByServiceMrns(serviceMrns, pageable);
+    }*/
+
     @RequestMapping(
             value = "/endorsements-by/{serviceLevel}/{orgMrn}",
             method = RequestMethod.GET,
@@ -77,7 +86,7 @@ public class EndorseController {
             method = RequestMethod.DELETE)
     @ResponseBody
     @PreAuthorize("@accessControlUtil.hasAccessToOrg(#orgMrn)")
-    public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceMrn, String orgMrn) {
+    public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String orgMrn) {
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrn(orgMrn, serviceMrn);
         if (endorsement == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -107,4 +116,14 @@ public class EndorseController {
     public Page<Endorsement> getEndorsedByParentMrn(HttpServletRequest request, @PathVariable String parentMrn, Pageable pageable) {
         return endorsementService.listByParentMrn(parentMrn, pageable);
     }
+
+    @RequestMapping(
+            value = "/endorsed-children/{parentMrn}/{orgMrn}",
+            method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Page<Endorsement> getEndorsedByParentMrnAndOrgMrn(HttpServletRequest request, @PathVariable String parentMrn, @PathVariable String orgMrn, Pageable pageable) {
+        return endorsementService.listByParentMrnAndOrgMrn(parentMrn, orgMrn, pageable);
+    }
+
 }
