@@ -45,7 +45,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Maritime Cloud Endorsement API")
                 .description("Maritime Cloud Endorsement API can be used for endorsing services in the Maritime Cloud.")
-                .version("0.0.1")
+                .version("0.4.90")
                 .contact(new Contact("Maritime Cloud", "http://maritimecloud.net", "info@maritimecloud.net"))
                 .build();
     }

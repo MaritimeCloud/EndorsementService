@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.maritimecloud.endorsement.validators.InPredefinedList;
 import net.maritimecloud.endorsement.validators.MRN;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -43,6 +44,12 @@ public class Endorsement extends TimestampModel {
     @NotBlank
     @Column(name = "service_mrn", nullable = false)
     private String serviceMrn;
+
+    @Getter
+    @Setter
+    @NotBlank
+    @Column(name = "service_version", nullable = false)
+    private String serviceVersion;
 
     @Getter
     @Setter
@@ -71,8 +78,14 @@ public class Endorsement extends TimestampModel {
 
     @Getter
     @Setter
+    @Column(name = "parent_version")
+    private String parentVersion;
+
+    @Getter
+    @Setter
     @NotBlank
     @ApiModelProperty(required = true, value = "The level being endorsed", allowableValues = "specification, design, instance")
+    @InPredefinedList(acceptedValues = {"specification", "design", "instance"})
     @Column(name = "service_level", nullable = false)
     private String serviceLevel;
 }

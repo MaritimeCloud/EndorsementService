@@ -1,10 +1,10 @@
 # https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 spring:
-    profiles.active: production
+    profiles.active: test
 
 # logging
 logging.level:
-    net.maritimecloud.identityregistry: DEBUG
+    net.maritimecloud.endorsement: DEBUG
     #org.springframework.web: DEBUG
     #org.springframework.security: DEBUG
     #org.keycloak.adapters: DEBUG

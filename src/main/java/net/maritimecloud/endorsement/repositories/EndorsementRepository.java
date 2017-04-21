@@ -25,9 +25,9 @@ import java.util.List;
 
 public interface EndorsementRepository extends PagingAndSortingRepository<Endorsement, Long> {
     Page<Endorsement> findByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
-    Page<Endorsement> findByServiceMrn(String serviceMrn, Pageable pageable);
-    List<Endorsement> findByServiceMrn(String serviceMrn);
-    Endorsement findByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);
+    Page<Endorsement> findByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion, Pageable pageable);
+    List<Endorsement> findByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion);
+    Endorsement findByOrgMrnAndServiceMrnAndServiceVersion(String orgMrn, String serviceMrn, String serviceVersion);
     Page<Endorsement> findByParentMrn(String parentMrn, Pageable pageable);
     Page<Endorsement> findByParentMrnAndOrgMrn(String parentMrn, String orgMrn, Pageable pageable);
     Page<Endorsement> findByServiceMrnIn(List<String> serviceMrns, Pageable pageable);

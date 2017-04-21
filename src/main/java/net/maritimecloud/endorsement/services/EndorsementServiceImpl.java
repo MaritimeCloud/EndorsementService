@@ -35,12 +35,12 @@ public class EndorsementServiceImpl implements EndorsementService {
         return this.endorsementRepository.findByOrgMrnAndServiceLevel(orgMrn, serviceLevel, pageable);
     }
 
-    public Page<Endorsement> listByServiceMrn(String serviceMrn, Pageable pageable) {
-        return this.endorsementRepository.findByServiceMrn(serviceMrn, pageable);
+    public Page<Endorsement> listByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion, Pageable pageable) {
+        return this.endorsementRepository.findByServiceMrnAndServiceVersion(serviceMrn, serviceVersion, pageable);
     }
 
-    public List<Endorsement> listByServiceMrn(String serviceMrn) {
-        return this.endorsementRepository.findByServiceMrn(serviceMrn);
+    public List<Endorsement> listByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion) {
+        return this.endorsementRepository.findByServiceMrnAndServiceVersion(serviceMrn, serviceVersion);
     }
 
     @Transactional
@@ -53,8 +53,8 @@ public class EndorsementServiceImpl implements EndorsementService {
         this.endorsementRepository.delete(endorsement);
     }
 
-    public Endorsement getByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn) {
-        return this.endorsementRepository.findByOrgMrnAndServiceMrn(orgMrn, serviceMrn);
+    public Endorsement getByOrgMrnAndServiceMrnAndServiceVersion(String orgMrn, String serviceMrn, String serviceVersion) {
+        return this.endorsementRepository.findByOrgMrnAndServiceMrnAndServiceVersion(orgMrn, serviceMrn, serviceVersion);
     }
 
     public Page<Endorsement> listByParentMrn(String parentMrn, Pageable pageable) {

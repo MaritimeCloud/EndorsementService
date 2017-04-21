@@ -25,12 +25,12 @@ import java.util.List;
 
 public interface EndorsementService {
     Page<Endorsement> listByOrgMrnAndServiceLevel(String orgMrn, String serviceLevel, Pageable pageable);
-    Page<Endorsement> listByServiceMrn(String serviceMrn, Pageable pageable);
-    List<Endorsement> listByServiceMrn(String serviceMrn);
+    Page<Endorsement> listByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion, Pageable pageable);
+    List<Endorsement> listByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion);
     Page<Endorsement> listByParentMrn(String serviceMrn, Pageable pageable);
     Page<Endorsement> listByParentMrnAndOrgMrn(String serviceMrn, String orgMrn, Pageable pageable);
     Page<Endorsement> listByServiceMrns(List<String> serviceMrns, Pageable pageable);
     Endorsement saveEndorsement(Endorsement endorsement);
     void deleteEndorsement(Endorsement endorsement);
-    Endorsement getByOrgMrnAndServiceMrn(String orgMrn, String serviceMrn);
+    Endorsement getByOrgMrnAndServiceMrnAndServiceVersion(String orgMrn, String serviceMrn, String serviceVersion);
 }
