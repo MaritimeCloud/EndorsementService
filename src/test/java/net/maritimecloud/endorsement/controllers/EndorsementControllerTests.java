@@ -13,10 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package net.maritimecloud.endorsement.controllers;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.maritimecloud.endorsement.model.db.Endorsement;
 import net.maritimecloud.endorsement.services.EndorsementService;
 import net.maritimecloud.endorsement.utils.AccessControlUtil;
@@ -37,12 +36,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -102,4 +103,113 @@ public class EndorsementControllerTests {
         }
     }
 
+    /**
+     * Try to create an endorsement with correct authentication
+     */
+    @Test
+    public void testCreateEndorsement() {
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+
+        Endorsement validEndorsement = new Endorsement();
+        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgName("DMA");
+        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceVersion("0.1.2");
+        validEndorsement.setServiceLevel("instance");
+        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
+        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setParentVersion("0.3.2");
+        String endorsementJson = serialize(validEndorsement);
+
+        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion("urn:mrn:mcl:org:dma", "urn:mrn:mcl:service-instance:dma:nw-nv", "0.1.2")).willReturn(null);
+        try {
+            mvc.perform(post("/oidc/endorsements").with(authentication(auth))
+                    .header("Origin", "bla")
+                    .content(endorsementJson)
+                    .contentType("application/json")
+            ).andExpect(status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    /**
+     * Try to create an endorsement with incorrect authentication - mismatch between token org and endorsing org
+     */
+    @Test
+    public void testCreateEndorsementInvalidOrg() {
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:sma", "ROLE_USER", "");
+
+        Endorsement validEndorsement = new Endorsement();
+        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgName("DMA");
+        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceVersion("0.1.2");
+        validEndorsement.setServiceLevel("instance");
+        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
+        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setParentVersion("0.3.2");
+        String endorsementJson = serialize(validEndorsement);
+
+        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion("urn:mrn:mcl:org:dma", "urn:mrn:mcl:service-instance:dma:nw-nv", "0.1.2")).willReturn(null);
+        try {
+            mvc.perform(post("/oidc/endorsements").with(authentication(auth))
+                    .header("Origin", "bla")
+                    .content(endorsementJson)
+                    .contentType("application/json")
+            ).andExpect(status().isForbidden());
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    /**
+     * Try to create an endorsement with invalid data
+     */
+    @Test
+    public void testCreateInvalidEndorsement() {
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+
+        Endorsement validEndorsement = new Endorsement();
+        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgName("DMA");
+        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceVersion("0.1.2");
+        validEndorsement.setServiceLevel("instance");
+        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
+        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        String endorsementJson = serialize(validEndorsement);
+
+        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion("urn:mrn:mcl:org:dma", "urn:mrn:mcl:service-instance:dma:nw-nv", "0.1.2")).willReturn(null);
+        try {
+            mvc.perform(post("/oidc/endorsements").with(authentication(auth))
+                    .header("Origin", "bla")
+                    .content(endorsementJson)
+                    .contentType("application/json")
+            ).andExpect(status().isBadRequest());
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    /**
+     * Helper function to serialize an endorsement to json
+     * @param endorsement
+     * @return
+     */
+    private String serialize(Endorsement endorsement) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // Convert object to JSON string and pretty print
+            String jsonInString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(endorsement);
+            //System.out.println(jsonInString);
+
+            return jsonInString;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
 }
