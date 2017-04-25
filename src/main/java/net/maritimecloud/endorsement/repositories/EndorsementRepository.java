@@ -28,8 +28,8 @@ public interface EndorsementRepository extends PagingAndSortingRepository<Endors
     Page<Endorsement> findByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion, Pageable pageable);
     List<Endorsement> findByServiceMrnAndServiceVersion(String serviceMrn, String serviceVersion);
     Endorsement findByOrgMrnAndServiceMrnAndServiceVersion(String orgMrn, String serviceMrn, String serviceVersion);
-    Page<Endorsement> findByParentMrn(String parentMrn, Pageable pageable);
-    Page<Endorsement> findByParentMrnAndOrgMrn(String parentMrn, String orgMrn, Pageable pageable);
+    Page<Endorsement> findByParentMrnAndParentVersion(String parentMrn, String parentVersion, Pageable pageable);
+    Page<Endorsement> findByParentMrnAndParentVersionAndOrgMrn(String parentMrn, String parentVersion, String orgMrn, Pageable pageable);
     Page<Endorsement> findByServiceMrnIn(List<String> serviceMrns, Pageable pageable);
 
 }

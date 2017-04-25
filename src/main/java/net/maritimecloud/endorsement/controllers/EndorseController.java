@@ -139,8 +139,8 @@ public class EndorseController {
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Page<Endorsement> getEndorsedByParentMrn(HttpServletRequest request, @PathVariable String parentMrn, Pageable pageable) {
-        return endorsementService.listByParentMrn(parentMrn, pageable);
+    public Page<Endorsement> getEndorsedByParentMrn(HttpServletRequest request, @PathVariable String parentMrn, @PathVariable String parentVersion, Pageable pageable) {
+        return endorsementService.listByParentMrnAndParentVersion(parentMrn, parentMrn, pageable);
     }
 
     @RequestMapping(
@@ -148,8 +148,8 @@ public class EndorseController {
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Page<Endorsement> getEndorsedByParentMrnAndOrgMrn(HttpServletRequest request, @PathVariable String parentMrn, @PathVariable String orgMrn, Pageable pageable) {
-        return endorsementService.listByParentMrnAndOrgMrn(parentMrn, orgMrn, pageable);
+    public Page<Endorsement> getEndorsedByParentMrnAndOrgMrn(HttpServletRequest request, @PathVariable String parentMrn, @PathVariable String parentVersion, @PathVariable String orgMrn, Pageable pageable) {
+        return endorsementService.listByParentMrnAndOrgMrn(parentMrn, parentMrn, orgMrn, pageable);
     }
 
 }

@@ -57,12 +57,12 @@ public class EndorsementServiceImpl implements EndorsementService {
         return this.endorsementRepository.findByOrgMrnAndServiceMrnAndServiceVersion(orgMrn, serviceMrn, serviceVersion);
     }
 
-    public Page<Endorsement> listByParentMrn(String parentMrn, Pageable pageable) {
-        return this.endorsementRepository.findByParentMrn(parentMrn, pageable);
+    public Page<Endorsement> listByParentMrnAndParentVersion(String parentMrn, String parentVersion, Pageable pageable) {
+        return this.endorsementRepository.findByParentMrnAndParentVersion(parentMrn, parentVersion, pageable);
     }
 
-    public Page<Endorsement> listByParentMrnAndOrgMrn(String serviceMrn, String orgMrn, Pageable pageable) {
-        return this.endorsementRepository.findByParentMrnAndOrgMrn(serviceMrn, orgMrn, pageable);
+    public Page<Endorsement> listByParentMrnAndOrgMrn(String parentMrn, String parentVersion, String orgMrn, Pageable pageable) {
+        return this.endorsementRepository.findByParentMrnAndParentVersionAndOrgMrn(parentMrn, parentVersion, orgMrn, pageable);
     }
 
     public Page<Endorsement> listByServiceMrns(List<String> serviceMrns, Pageable pageable) {
