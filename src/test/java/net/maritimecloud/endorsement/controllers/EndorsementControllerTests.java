@@ -37,14 +37,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -74,10 +79,10 @@ public class EndorsementControllerTests {
 
 
     /**
-     * Try to get a service without being authenticated
+     * Try to get a endorsement without being authenticated
      */
     @Test
-    public void testAccessGetServiceWithoutAuthentication() {
+    public void testAccessGetEndorsementWithoutAuthentication() {
         given(this.endorsementService.listByOrgMrnAndServiceLevel("urn:mrn:mcl:org:dma", "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
         try {
             mvc.perform(get("/oidc/endorsements-by/instance/urn:mrn:mcl:org:dma").header("Origin", "bla")).andExpect(status().isUnauthorized());
@@ -88,10 +93,10 @@ public class EndorsementControllerTests {
     }
 
     /**
-     * Try to get a service without being authenticated
+     * Try to get a endorsement with authentication
      */
     @Test
-    public void testAccessGetServiceWithAuthentication() {
+    public void testAccessGetEndorsementWithAuthentication() {
         KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
 
         given(this.endorsementService.listByOrgMrnAndServiceLevel("urn:mrn:mcl:org:dma", "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
@@ -194,6 +199,35 @@ public class EndorsementControllerTests {
             assertTrue(false);
         }
     }
+
+    /**
+     * Try to get an endorsement list with authentication
+     */
+    @Test
+    public void testAccessGetEndorsementListWithAuthentication() {
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+        Endorsement validEndorsement = new Endorsement();
+        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgName("DMA");
+        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceVersion("0.3");
+        validEndorsement.setServiceLevel("instance");
+        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
+        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        String endorsementJson = serialize(validEndorsement);
+
+        given(this.endorsementService.listByServiceMrnAndServiceVersion(eq("urn:mrn:mcl:service:design:dma:nw-nm-rest"), eq("0.3"), any()))
+                .willReturn(new PageImpl<Endorsement>(Arrays.asList(validEndorsement)));
+        try {
+            mvc.perform(get("/oidc/endorsements/urn:mrn:mcl:service:design:dma:nw-nm-rest/0.3").with(authentication(auth)).header("Origin", "bla"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().json("{\"content\":[{\"serviceMrn\":\"urn:mrn:mcl:service-instance:dma:nw-nv\",\"serviceVersion\":\"0.3\",\"orgMrn\":\"urn:mrn:mcl:org:dma\",\"orgName\":\"DMA\",\"userMrn\":\"urn:mrn:mcl:user:dma:tgc\",\"parentMrn\":\"urn:mrn:mcl:service-design:dma:nw-nv\",\"serviceLevel\":\"instance\"}],\"last\":true,\"totalElements\":1,\"totalPages\":1,\"sort\":null,\"numberOfElements\":1,\"first\":true,\"size\":0,\"number\":0}", false));
+        } catch (Exception e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
 
     /**
      * Helper function to serialize an endorsement to json
