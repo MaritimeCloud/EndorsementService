@@ -14,7 +14,7 @@ services:
 
 install:
     # Build the spring boot app and copy the result to the docker folder
-    - mvn -U -Dspring.profiles.active=test clean install && cp target/mc-endorsement-service-0.5.0-SNAPSHOT.war docker/
+    - mvn -U -Dspring.profiles.active=test clean install && cp target/mc-endorsement-service-0.5.1-SNAPSHOT.war docker/
 
 before_script:  
     - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
