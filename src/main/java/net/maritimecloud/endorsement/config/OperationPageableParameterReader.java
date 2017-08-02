@@ -14,22 +14,23 @@
  *  limitations under the License.
  */
 
-/* Obtained from https://github.com/springfox/springfox/issues/755#issuecomment-262416232 */
+/* Obtained from https://github.com/springfox/springfox/issues/755#issuecomment-288987588 */
 
 package net.maritimecloud.endorsement.config;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.base.Function;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import springfox.documentation.builders.ParameterBuilder;
-import springfox.documentation.schema.ModelReference;
 import springfox.documentation.schema.ResolvedTypes;
 import springfox.documentation.schema.TypeNameExtractor;
+import springfox.documentation.schema.ModelReference;
 import springfox.documentation.service.Parameter;
 import springfox.documentation.service.ResolvedMethodParameter;
 import springfox.documentation.spi.DocumentationType;
@@ -37,8 +38,6 @@ import springfox.documentation.spi.schema.contexts.ModelContext;
 import springfox.documentation.spi.service.OperationBuilderPlugin;
 import springfox.documentation.spi.service.contexts.OperationContext;
 import springfox.documentation.spi.service.contexts.ParameterContext;
-
-import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static springfox.documentation.spi.schema.contexts.ModelContext.inputParam;
@@ -106,7 +105,9 @@ public class OperationPageableParameterReader implements OperationBuilderPlugin 
     }
 
     private Function<ResolvedType, ? extends ModelReference> createModelRefFactory(ParameterContext context) {
-        ModelContext modelContext = inputParam(context.resolvedMethodParameter().getParameterType().getErasedType(),
+        ModelContext modelContext = inputParam(
+                context.getGroupName(),
+                context.resolvedMethodParameter().getParameterType(),
                 context.getDocumentationType(),
                 context.getAlternateTypeProvider(),
                 context.getGenericNamingStrategy(),
