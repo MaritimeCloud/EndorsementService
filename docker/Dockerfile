@@ -6,8 +6,8 @@
 FROM java:8
 
 RUN mkdir -p /conf
-ADD mc-endorsement-service-0.5.1-SNAPSHOT.war .
+ADD mc-endorsement-service-0.6.0-SNAPSHOT.war .
 
 EXPOSE 8870
 
-CMD ["java", "-Dspring.profiles.active=docker", "-jar", "mc-endorsement-service-0.5.1-SNAPSHOT.war", "--spring.config.location=/conf/application.yml", "--keycloak.config.file=/conf/keycloak.conf"]
+CMD ["java", "-Dspring.profiles.active=docker", "-jar", "mc-endorsement-service-0.6.0-SNAPSHOT.war", "--spring.config.location=/conf/application.yml", "--keycloak.config.file=/conf/keycloak.conf"]
