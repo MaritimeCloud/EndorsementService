@@ -43,10 +43,10 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-                .title("Maritime Cloud Endorsement API")
-                .description("Maritime Cloud Endorsement API can be used for endorsing services in the Maritime Cloud.")
-                .version("0.5.0")
-                .contact(new Contact("Maritime Cloud", "http://maritimecloud.net", "info@maritimecloud.net"))
+                .title("Maritime Connectivity Platform Endorsement API")
+                .description("MCP Endorsement API can be used for endorsing services in the Maritime Connectivity Platform.")
+                .version("0.7.0")
+                .contact(new Contact("Maritime Connectivity Platform", "http://maritimeconnectivityplatform.net", "info@maritimecloud.net"))
                 .build();
     }
 }

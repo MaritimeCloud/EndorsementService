@@ -3,10 +3,13 @@
 # 
 # A customized conf file (application.yml) must be available in the folder mounted to /conf.
 
-FROM java:8
+FROM openjdk:8-jre
 
 RUN mkdir -p /conf
 ADD mc-endorsement-service-0.6.0-SNAPSHOT.war .
+
+# Set locales for image to support UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 EXPOSE 8870
 
