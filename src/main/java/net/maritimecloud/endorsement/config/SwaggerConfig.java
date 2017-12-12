@@ -46,7 +46,7 @@ public class SwaggerConfig {
                 .title("Maritime Connectivity Platform Endorsement API")
                 .description("MCP Endorsement API can be used for endorsing services in the Maritime Connectivity Platform.")
                 .version("0.7.0")
-                .contact(new Contact("Maritime Connectivity Platform", "http://maritimeconnectivityplatform.net", "info@maritimecloud.net"))
+                .contact(new Contact("Maritime Connectivity Platform", "http://maritimeconnectivity.net", "info@maritimeconnectivity.net"))
                 .build();
     }
 }
