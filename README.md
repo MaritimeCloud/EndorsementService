@@ -1,3 +1,3 @@
-[![Build Status](https://travis-ci.org/MaritimeCloud/EndorsementService.svg?branch=master)](https://travis-ci.org/MaritimeCloud/EndorsementService)
+[![Build Status](https://travis-ci.org/MaritimeConnectivityPlatform/EndorsementService.svg?branch=master)](https://travis-ci.org/MaritimeConnectivityPlatform/EndorsementService)
 
 # EndorsementService
