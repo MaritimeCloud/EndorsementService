@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.maritimecloud.endorsement.model.JsonSerializable;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -31,7 +32,8 @@ public abstract class TimestampModel implements JsonSerializable {
     @Setter(AccessLevel.PROTECTED)
     @JsonIgnore
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id")
     protected Long id;
 
