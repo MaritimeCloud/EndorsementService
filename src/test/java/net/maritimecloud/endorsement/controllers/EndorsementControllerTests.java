@@ -42,14 +42,13 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -217,11 +216,11 @@ public class EndorsementControllerTests {
         String endorsementJson = serialize(validEndorsement);
 
         given(this.endorsementService.listByServiceMrnAndServiceVersion(eq("urn:mrn:mcl:service:design:dma:nw-nm-rest"), eq("0.3"), any()))
-                .willReturn(new PageImpl<Endorsement>(Arrays.asList(validEndorsement)));
+                .willReturn(new PageImpl<>(Arrays.asList(validEndorsement)));
         try {
             mvc.perform(get("/oidc/endorsements/urn:mrn:mcl:service:design:dma:nw-nm-rest/0.3").with(authentication(auth)).header("Origin", "bla"))
                     .andExpect(status().isOk())
-                    .andExpect(content().json("{\"content\":[{\"serviceMrn\":\"urn:mrn:mcl:service-instance:dma:nw-nv\",\"serviceVersion\":\"0.3\",\"orgMrn\":\"urn:mrn:mcl:org:dma\",\"orgName\":\"DMA\",\"userMrn\":\"urn:mrn:mcl:user:dma:tgc\",\"parentMrn\":\"urn:mrn:mcl:service-design:dma:nw-nv\",\"serviceLevel\":\"instance\"}],\"last\":true,\"totalElements\":1,\"totalPages\":1,\"sort\":null,\"numberOfElements\":1,\"first\":true,\"size\":0,\"number\":0}", false));
+                    .andExpect(content().json("{\"content\":[{\"serviceMrn\":\"urn:mrn:mcl:service-instance:dma:nw-nv\",\"serviceVersion\":\"0.3\",\"orgMrn\":\"urn:mrn:mcl:org:dma\",\"orgName\":\"DMA\",\"userMrn\":\"urn:mrn:mcl:user:dma:tgc\",\"parentMrn\":\"urn:mrn:mcl:service-design:dma:nw-nv\",\"serviceLevel\":\"instance\"}]}", false));
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(false);

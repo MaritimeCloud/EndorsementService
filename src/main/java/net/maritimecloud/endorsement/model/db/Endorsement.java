@@ -23,11 +23,11 @@ import lombok.Setter;
 import lombok.ToString;
 import net.maritimecloud.endorsement.validators.InPredefinedList;
 import net.maritimecloud.endorsement.validators.MRN;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(exclude={"id", "createdAt", "updatedAt"})
 @ToString
