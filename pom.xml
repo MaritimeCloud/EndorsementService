@@ -86,6 +86,12 @@
             <version>1.16.20</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.deepoove</groupId>
+            <artifactId>swagger-diff</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
