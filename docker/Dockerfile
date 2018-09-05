@@ -6,11 +6,11 @@
 FROM openjdk:8-jre
 
 RUN mkdir -p /conf
-ADD mc-endorsement-service-0.7.2-SNAPSHOT.war .
+ADD mc-endorsement-service-0.8.0-SNAPSHOT.war .
 
 # Set locales for image to support UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 EXPOSE 8870
 
-CMD ["java", "-Dspring.profiles.active=docker", "-jar", "mc-endorsement-service-0.7.2-SNAPSHOT.war", "--spring.config.location=/conf/application.yml", "--keycloak.config.file=/conf/keycloak.conf"]
+CMD ["java", "-Dspring.profiles.active=docker", "-jar", "mc-endorsement-service-0.8.0-SNAPSHOT.war", "--spring.config.location=/conf/application.yml", "--keycloak.config.file=/conf/keycloak.conf"]
