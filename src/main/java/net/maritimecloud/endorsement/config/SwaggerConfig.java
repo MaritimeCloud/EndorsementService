@@ -35,6 +35,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(getApiInfo())
+                .forCodeGeneration(true)
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.regex("/(oidc|x509)/endorse.*"))
@@ -45,8 +46,10 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Maritime Connectivity Platform Endorsement API")
                 .description("MCP Endorsement API can be used for endorsing services in the Maritime Connectivity Platform.")
-                .version("0.7.2")
+                .version("0.8.0")
                 .contact(new Contact("Maritime Connectivity Platform", "http://maritimeconnectivity.net", "info@maritimeconnectivity.net"))
+                .license("Apache 2.0")
+                .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
                 .build();
     }
 }
