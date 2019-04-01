@@ -24,3 +24,5 @@ script:
     - docker build --no-cache -t dmadk/mc-endorsement-service docker
     # Push the image to the repository
     - docker push dmadk/mc-endorsement-service
+    # Logout after build
+    - docker logout
