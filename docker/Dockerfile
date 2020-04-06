@@ -13,4 +13,4 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 EXPOSE 8870
 
-CMD ["java", "-Dspring.profiles.active=docker", "-jar", "mc-endorsement-service-0.9.0-SNAPSHOT.war", "--spring.config.location=/conf/application.yml", "--keycloak.config.file=/conf/keycloak.conf"]
+CMD ["java", "-Dspring.profiles.active=docker", "-jar", "mc-endorsement-service-0.9.0-SNAPSHOT.war", "--spring.config.location=/conf/application.yml", "--keycloak.configurationFile=file:/conf/keycloak.json"]
