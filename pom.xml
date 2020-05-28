@@ -3,12 +3,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.maritimecloud.endorse</groupId>
-    <artifactId>mc-endorsement-service</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <groupId>net.maritimeconnectivity.endorse</groupId>
+    <artifactId>mcp-endorsement-service</artifactId>
+    <version>0.11.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>mc-endorsement-service</name>
+    <name>mcp-endorsement-service</name>
     <description>MCP Endorsement Service</description>
 
     <parent>
@@ -68,38 +68,24 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>3.2.1.Final</version>
+            <version>9.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.0</version>
+            <version>2.9.2</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>5.0.7</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.deepoove</groupId>
-            <artifactId>swagger-diff</artifactId>
-            <version>1.1.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id>jcenter-snapshots</id>
-            <name>jcenter</name>
-            <url>https://jcenter.bintray.com/</url>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -108,6 +94,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>

@@ -1,7 +1,7 @@
 {
-    "realm": "MaritimeCloud",
+    "realm": "MCP",
     "bearer-only": true,
-    "auth-server-url": "https://test-maritimeid.maritimecloud.net/auth",
+    "auth-server-url": "https://test-maritimeid.maritimeconnectivity.net/auth",
     "ssl-required": "none",
     "resource": "endorsement"
 }
