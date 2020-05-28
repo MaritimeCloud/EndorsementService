@@ -16,6 +16,7 @@
 
 package net.maritimeconnectivity.endorsement.validators;
 
+import lombok.extern.slf4j.Slf4j;
 import net.maritimeconnectivity.endorsement.model.db.Endorsement;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import static junit.framework.TestCase.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @WebAppConfiguration
+@Slf4j
 public class EndorsementValidatorTest {
 
     @Autowired
@@ -39,18 +41,17 @@ public class EndorsementValidatorTest {
     @Test
     public void validateValidEndorsement() {
         Endorsement validEndorsement = new Endorsement();
-        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgMrn("urn:mrn:mcp:org:idp1:dma");
         validEndorsement.setOrgName("DMA");
-        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceMrn("urn:mrn:mcp:service:idp1:dma:instance:nw-nm");
         validEndorsement.setServiceVersion("0.1.2");
         validEndorsement.setServiceLevel("instance");
-        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
-        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setUserMrn("urn:mrn:mcp:user:idp1:dma:tgc");
+        validEndorsement.setParentMrn("urn:mrn:mcp:service:idp1:dma:design:nw-nm");
         validEndorsement.setParentVersion("0.3.2");
 
         Errors errors = new BeanPropertyBindingResult(validEndorsement, "validEndorsement");
         endorsementValidator.validate(validEndorsement, errors);
-        System.out.println(errors.getErrorCount());
         assertEquals(0, errors.getErrorCount());
 
     }
@@ -58,21 +59,20 @@ public class EndorsementValidatorTest {
     @Test
     public void validateInvalidEndorsement() {
         Endorsement invalidEndorsement = new Endorsement();
-        invalidEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        invalidEndorsement.setOrgMrn("urn:mrn:mcp:org:idp1:dma");
         invalidEndorsement.setOrgName("DMA");
-        invalidEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        invalidEndorsement.setServiceMrn("urn:mrn:mcp:service:idp1:dma:instance:nw-nm");
         invalidEndorsement.setServiceVersion("0.1.2");
         // Invalid service level - should be "instance"
         invalidEndorsement.setServiceLevel("instances");
         // Invalid user mrn
         invalidEndorsement.setUserMrn("urn:xxmrn:mcl:user:dma:tgc");
-        invalidEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        invalidEndorsement.setParentMrn("urn:mrn:mcp:service:idp1:dma:design:nw-nm");
         // Invalid - parentMrn and parentVersion must be set for non-specification level
         invalidEndorsement.setParentVersion(null);
 
         Errors errors = new BeanPropertyBindingResult(invalidEndorsement, "validEndorsement");
         endorsementValidator.validate(invalidEndorsement, errors);
-        System.out.println(errors.getErrorCount());
         assertEquals(3, errors.getErrorCount());
 
     }

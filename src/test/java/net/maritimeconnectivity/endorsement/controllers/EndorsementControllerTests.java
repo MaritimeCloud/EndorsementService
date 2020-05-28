@@ -16,6 +16,7 @@
 package net.maritimeconnectivity.endorsement.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.maritimeconnectivity.endorsement.model.db.Endorsement;
 import net.maritimeconnectivity.endorsement.services.EndorsementService;
 import net.maritimeconnectivity.endorsement.utils.AccessControlUtil;
@@ -33,6 +34,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -40,14 +42,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -55,6 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @WebAppConfiguration
 @EnableSpringDataWebSupport
+@Slf4j
 public class EndorsementControllerTests {
     @Autowired
     private WebApplicationContext context;
@@ -66,6 +69,11 @@ public class EndorsementControllerTests {
 
     @MockBean
     private EndorsementService endorsementService;
+    
+    private static final String ORG_MRN = "urn:mrn:mcp:org:idp1:dma";
+    private static final String INSTANCE_MRN = "urn:mrn:mcp:service:idp1:dma:instance:nw-nm";
+    private static final String USER_MRN = "urn:mrn:mcp:user:idp1:dma:tgc";
+    private static final String DESIGN_MRN = "urn:mrn:mcp:service:idp1:dma:design:nw-nm";
 
     @Before
     public void setup() {
@@ -82,12 +90,12 @@ public class EndorsementControllerTests {
      */
     @Test
     public void testAccessGetEndorsementWithoutAuthentication() {
-        given(this.endorsementService.listByOrgMrnAndServiceLevel("urn:mrn:mcl:org:dma", "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
+        given(this.endorsementService.listByOrgMrnAndServiceLevel(ORG_MRN, "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
         try {
-            mvc.perform(get("/oidc/endorsements-by/instance/urn:mrn:mcl:org:dma").header("Origin", "bla")).andExpect(status().isUnauthorized());
+            mvc.perform(get("/oidc/endorsements-by/instance/" + ORG_MRN).header("Origin", "bla")).andExpect(status().isUnauthorized());
         } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
+            log.error(e.getMessage());
+            fail();
         }
     }
 
@@ -96,14 +104,14 @@ public class EndorsementControllerTests {
      */
     @Test
     public void testAccessGetEndorsementWithAuthentication() {
-        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken(ORG_MRN, "ROLE_USER", "");
 
-        given(this.endorsementService.listByOrgMrnAndServiceLevel("urn:mrn:mcl:org:dma", "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
+        given(this.endorsementService.listByOrgMrnAndServiceLevel(ORG_MRN, "instance", null)).willReturn(new PageImpl<Endorsement>(Collections.emptyList()));
         try {
-            mvc.perform(get("/oidc/endorsements-by/instance/urn:mrn:mcl:org:dma").with(authentication(auth)).header("Origin", "bla")).andExpect(status().isOk());
+            mvc.perform(get("/oidc/endorsements-by/instance/" + ORG_MRN).with(authentication(auth)).header("Origin", "bla")).andExpect(status().isOk());
         } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
+            log.error(e.getMessage());
+            fail();
         }
     }
 
@@ -112,20 +120,20 @@ public class EndorsementControllerTests {
      */
     @Test
     public void testCreateEndorsement() {
-        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken(ORG_MRN, "ROLE_USER", "");
 
         Endorsement validEndorsement = new Endorsement();
-        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgMrn(ORG_MRN);
         validEndorsement.setOrgName("DMA");
-        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceMrn(INSTANCE_MRN);
         validEndorsement.setServiceVersion("0.1.2");
         validEndorsement.setServiceLevel("instance");
-        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
-        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setUserMrn(USER_MRN);
+        validEndorsement.setParentMrn(DESIGN_MRN);
         validEndorsement.setParentVersion("0.3.2");
         String endorsementJson = serialize(validEndorsement);
 
-        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion("urn:mrn:mcl:org:dma", "urn:mrn:mcl:service-instance:dma:nw-nv", "0.1.2")).willReturn(null);
+        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion(ORG_MRN, INSTANCE_MRN, "0.1.2")).willReturn(null);
         try {
             mvc.perform(post("/oidc/endorsements").with(authentication(auth))
                     .header("Origin", "bla")
@@ -133,8 +141,8 @@ public class EndorsementControllerTests {
                     .contentType("application/json")
             ).andExpect(status().isOk());
         } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
+            log.error(e.getMessage());
+            fail();
         }
     }
 
@@ -143,20 +151,20 @@ public class EndorsementControllerTests {
      */
     @Test
     public void testCreateEndorsementInvalidOrg() {
-        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:sma", "ROLE_USER", "");
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcp:org:idp1:sma", "ROLE_USER", "");
 
         Endorsement validEndorsement = new Endorsement();
-        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgMrn(ORG_MRN);
         validEndorsement.setOrgName("DMA");
-        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceMrn(INSTANCE_MRN);
         validEndorsement.setServiceVersion("0.1.2");
         validEndorsement.setServiceLevel("instance");
-        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
-        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setUserMrn(USER_MRN);
+        validEndorsement.setParentMrn(DESIGN_MRN);
         validEndorsement.setParentVersion("0.3.2");
         String endorsementJson = serialize(validEndorsement);
 
-        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion("urn:mrn:mcl:org:dma", "urn:mrn:mcl:service-instance:dma:nw-nv", "0.1.2")).willReturn(null);
+        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion(ORG_MRN, INSTANCE_MRN, "0.1.2")).willReturn(null);
         try {
             mvc.perform(post("/oidc/endorsements").with(authentication(auth))
                     .header("Origin", "bla")
@@ -164,8 +172,8 @@ public class EndorsementControllerTests {
                     .contentType("application/json")
             ).andExpect(status().isForbidden());
         } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
+            log.error(e.getMessage());
+            fail();
         }
     }
 
@@ -174,19 +182,19 @@ public class EndorsementControllerTests {
      */
     @Test
     public void testCreateInvalidEndorsement() {
-        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken(ORG_MRN, "ROLE_USER", "");
 
         Endorsement validEndorsement = new Endorsement();
-        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgMrn(ORG_MRN);
         validEndorsement.setOrgName("DMA");
-        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceMrn(INSTANCE_MRN);
         validEndorsement.setServiceVersion("0.1.2");
         validEndorsement.setServiceLevel("instance");
-        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
-        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setUserMrn(USER_MRN);
+        validEndorsement.setParentMrn(DESIGN_MRN);
         String endorsementJson = serialize(validEndorsement);
 
-        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion("urn:mrn:mcl:org:dma", "urn:mrn:mcl:service-instance:dma:nw-nv", "0.1.2")).willReturn(null);
+        given(this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion(ORG_MRN, INSTANCE_MRN, "0.1.2")).willReturn(null);
         try {
             mvc.perform(post("/oidc/endorsements").with(authentication(auth))
                     .header("Origin", "bla")
@@ -194,8 +202,8 @@ public class EndorsementControllerTests {
                     .contentType("application/json")
             ).andExpect(status().isBadRequest());
         } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
+            log.error(e.getMessage());
+            fail();
         }
     }
 
@@ -204,26 +212,28 @@ public class EndorsementControllerTests {
      */
     @Test
     public void testAccessGetEndorsementListWithAuthentication() {
-        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken("urn:mrn:mcl:org:dma", "ROLE_USER", "");
+        KeycloakAuthenticationToken auth = TokenGenerator.generateKeycloakToken(ORG_MRN, "ROLE_USER", "");
         Endorsement validEndorsement = new Endorsement();
-        validEndorsement.setOrgMrn("urn:mrn:mcl:org:dma");
+        validEndorsement.setOrgMrn(ORG_MRN);
         validEndorsement.setOrgName("DMA");
-        validEndorsement.setServiceMrn("urn:mrn:mcl:service-instance:dma:nw-nv");
+        validEndorsement.setServiceMrn(INSTANCE_MRN);
         validEndorsement.setServiceVersion("0.3");
         validEndorsement.setServiceLevel("instance");
-        validEndorsement.setUserMrn("urn:mrn:mcl:user:dma:tgc");
-        validEndorsement.setParentMrn("urn:mrn:mcl:service-design:dma:nw-nv");
+        validEndorsement.setUserMrn(USER_MRN);
+        validEndorsement.setParentMrn(DESIGN_MRN);
         String endorsementJson = serialize(validEndorsement);
+        endorsementJson = String.format("{\"content\":[%s]}", endorsementJson);
+        log.debug(endorsementJson);
 
-        given(this.endorsementService.listByServiceMrnAndServiceVersion(eq("urn:mrn:mcl:service:design:dma:nw-nm-rest"), eq("0.3"), any()))
-                .willReturn(new PageImpl<>(Arrays.asList(validEndorsement)));
+        given(this.endorsementService.listByServiceMrnAndServiceVersion(eq(ORG_MRN), eq("0.3"), any()))
+                .willReturn(new PageImpl<>(Collections.singletonList(validEndorsement)));
         try {
-            mvc.perform(get("/oidc/endorsements/urn:mrn:mcl:service:design:dma:nw-nm-rest/0.3").with(authentication(auth)).header("Origin", "bla"))
+            mvc.perform(get(String.format("/oidc/endorsements/%s/0.3", ORG_MRN)).with(authentication(auth)).header("Origin", "bla"))
                     .andExpect(status().isOk())
-                    .andExpect(content().json("{\"content\":[{\"serviceMrn\":\"urn:mrn:mcl:service-instance:dma:nw-nv\",\"serviceVersion\":\"0.3\",\"orgMrn\":\"urn:mrn:mcl:org:dma\",\"orgName\":\"DMA\",\"userMrn\":\"urn:mrn:mcl:user:dma:tgc\",\"parentMrn\":\"urn:mrn:mcl:service-design:dma:nw-nv\",\"serviceLevel\":\"instance\"}]}", false));
+                    .andExpect(content().json(endorsementJson));
         } catch (Exception e) {
-            e.printStackTrace();
-            assertTrue(false);
+            log.error(e.getMessage());
+            fail();
         }
     }
 
@@ -237,10 +247,7 @@ public class EndorsementControllerTests {
         ObjectMapper mapper = new ObjectMapper();
         try {
             // Convert object to JSON string and pretty print
-            String jsonInString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(endorsement);
-            //System.out.println(jsonInString);
-
-            return jsonInString;
+            return mapper.writeValueAsString(endorsement);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

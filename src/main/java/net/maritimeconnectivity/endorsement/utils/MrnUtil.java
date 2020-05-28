@@ -23,75 +23,12 @@ import java.util.regex.Pattern;
  */
 public class MrnUtil {
 
-    public final static String MC_MRN_PREFIX = "urn:mrn";
-    // TODO: "mcl" probably shouldn't be hardcoded...
-    public final static String MC_MRN_OWNER_PREFIX = MC_MRN_PREFIX + ":mcl";
-    public final static String MC_MRN_ORG_PREFIX = MC_MRN_OWNER_PREFIX + ":org";
-    public final static Pattern URN_PATTERN = Pattern.compile("^urn:[a-z0-9][a-z0-9-]{0,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-    public final static Pattern MRN_PATTERN = Pattern.compile("^urn:mrn:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-    public final static Pattern MRN_SERVICE_PATTERN = Pattern.compile("^urn:mrn:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+?:service:(instance|design|specification):([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-    public final static Pattern MRN_USER_PATTERN = Pattern.compile("^urn:mrn:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+?:user:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-    public final static Pattern MRN_VESSEL_PATTERN = Pattern.compile("^urn:mrn:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+?:vessel:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-    public final static Pattern MRN_DEVICE_PATTERN = Pattern.compile("^urn:mrn:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+?:device:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-
-
-    public static String getOrgShortNameFromOrgMrn(String orgMrn) {
-        int idx = orgMrn.lastIndexOf(":") + 1;
-        return orgMrn.substring(idx);
+    private MrnUtil() {
+        // empty so it cannot be instantiated
     }
 
-    /**
-     * Returns the org shortname of the organization responsible for validating the organization that is
-     * identified by the given shortname. If MCP is the validator "mcl" is returned.
-     * @param orgShortname
-     * @return
-     */
-    public static String getOrgValidatorFromOrgShortname(String orgShortname) {
-        if (orgShortname.contains("@")) {
-            // This handles the nested validators
-            String[] dividedShotname = orgShortname.split("@", 2);
-            return dividedShotname[1];
-        } else {
-            return "mcl";
-        }
-    }
-
-    public static String getOrgShortNameFromEntityMrn(String entityMrn) {
-        // An entity MRN looks like this: urn:mrn:mcl:user:<org-shortname>:<user-id>
-        int tmpIdx = entityMrn.indexOf(":user:");
-        int startIdx = tmpIdx + 6;
-        if (tmpIdx < 0) {
-            tmpIdx = entityMrn.indexOf(":device:");
-            startIdx = tmpIdx + 8;
-        }
-        if (tmpIdx < 0) {
-            tmpIdx = entityMrn.indexOf(":vessel:");
-            startIdx = tmpIdx + 8;
-        }
-        if (tmpIdx < 0) {
-            tmpIdx = entityMrn.indexOf(":service:instance:");
-            startIdx = tmpIdx + 18;
-        }
-        if (tmpIdx < 0) {
-            throw new IllegalArgumentException("MRN is not a valid entity MRN!");
-        }
-        int endIdx = entityMrn.indexOf(":", startIdx);
-        return entityMrn.substring(startIdx, endIdx);
-    }
-
-    public static String getEntityIdFromMrn(String entityMrn) {
-        int idx = entityMrn.lastIndexOf(":") + 1;
-        return entityMrn.substring(idx);
-    }
-
-    public static String getServiceTypeFromMrn(String serviceMrn) {
-        if (!serviceMrn.contains(":instance:") || !serviceMrn.contains(":service:")) {
-            throw new IllegalArgumentException("The MRN must belong to a service instance!");
-        }
-        int startIdx = serviceMrn.indexOf(":service:instance:") + 18;
-        int endIdx = serviceMrn.indexOf(":", startIdx);
-        return serviceMrn.substring(startIdx, endIdx);
-    }
+    public static final Pattern MRN_PATTERN = Pattern.compile("^urn:mrn:mcp:(device|org|user|vessel|service|mms):([a-z0-9]([a-z0-9]|-){0,20}[a-z0-9]):((([-._a-z0-9]|~)|%[0-9a-f][0-9a-f]|([!$&'()*+,;=])|:|@)((([-._a-z0-9]|~)|%[0-9a-f][0-9a-f]|([!$&'()*+,;=])|:|@)|/)*)$", Pattern.CASE_INSENSITIVE);
+    public static final Pattern MRN_SERVICE_PATTERN = Pattern.compile("^urn:mrn:mcp:service:([a-z0-9]([a-z0-9]|-){0,20}[a-z0-9]):((([-._a-z0-9]|~)|%[0-9a-f][0-9a-f]|([!$&'()*+,;=])|:|@)((([-._a-z0-9]|~)|%[0-9a-f][0-9a-f]|([!$&'()*+,;=])|:|@)|/)*)$", Pattern.CASE_INSENSITIVE);
 
     public static boolean validateMrn(String mrn) {
         if (mrn == null || mrn.trim().isEmpty()) {
@@ -101,27 +38,13 @@ public class MrnUtil {
             throw new IllegalArgumentException("MRN is not in a valid format");
         }
         // validate mrn based on the entity type
-        if (mrn.contains(":service:") && !MRN_SERVICE_PATTERN.matcher(mrn).matches()) {
-            throw new IllegalArgumentException("MRN is not in a valid format for a service");
-        } else if (mrn.contains(":user:") && !MRN_USER_PATTERN.matcher(mrn).matches()) {
-            throw new IllegalArgumentException("MRN is not in a valid format for a user");
-        } else if (mrn.contains(":vessel:") && !MRN_VESSEL_PATTERN.matcher(mrn).matches()) {
-            throw new IllegalArgumentException("MRN is not in a valid format for a vessel");
-        } else if (mrn.contains(":device:") && !MRN_DEVICE_PATTERN.matcher(mrn).matches()) {
-            throw new IllegalArgumentException("MRN is not in a valid format for a device");
+        String[] parts = mrn.split(":");
+        if (parts[3].equals("service")) {
+            Pattern serviceTypes = Pattern.compile("^(specification|design|instance)$", Pattern.CASE_INSENSITIVE);
+            if (!MRN_SERVICE_PATTERN.matcher(mrn).matches() || parts.length < 8 || !serviceTypes.matcher(parts[6]).matches()) {
+                throw new IllegalArgumentException("MRN is not in a valid format for a service");
+            }
         }
         return true;
     }
-
-    /**
-     * Get MRN prefix. Would be 'urn:mrn:mcl' for 'urn:mrn:mcl:org:dma', and 'urn:mrn:stm' for 'urn:mrn:stm:user:sma:user42'
-     * @param mrn
-     * @return
-     */
-    public static String getMrnPrefix(String mrn) {
-        // mrn always starts with 'urn:mrn:<sub-namespace>'
-        int prefixEnd = mrn.indexOf(":", 8);
-        return mrn.substring(0, prefixEnd);
-    }
-
 }

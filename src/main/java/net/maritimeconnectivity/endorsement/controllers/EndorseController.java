@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-//@RequestMapping(value={"oidc", "x509"})
 @RequestMapping(value="oidc")
 public class EndorseController {
 
@@ -60,7 +59,7 @@ public class EndorseController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     @PreAuthorize("@accessControlUtil.hasAccessToOrg(#input.getOrgMrn())")
-    public ResponseEntity<Endorsement> createEndorment(HttpServletRequest request, @Validated @RequestBody Endorsement input) {
+    public ResponseEntity<Endorsement> createEndorsement(HttpServletRequest request, @Validated @RequestBody Endorsement input) {
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion(input.getOrgMrn(), input.getServiceMrn(), input.getServiceVersion());
         if (endorsement != null) {
             endorsement.setUserMrn(input.getUserMrn());
@@ -76,36 +75,16 @@ public class EndorseController {
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Page<Endorsement> getEndormentsByServiceMrn(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String serviceVersion, Pageable pageable) {
+    public Page<Endorsement> getEndorsementsByServiceMrn(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String serviceVersion, Pageable pageable) {
         return endorsementService.listByServiceMrnAndServiceVersion(serviceMrn, serviceVersion, pageable);
     }
-
-    /*@RequestMapping(
-            value = "/endorsement-list",
-            method = RequestMethod.POST,
-            consumes = "application/json;charset=UTF-8",
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public List<EndorsementList> getEndormentsByServiceMrns(HttpServletRequest request, @RequestBody List<String> serviceMrns) {
-        List<EndorsementList> endorsementLists = new ArrayList<>();
-        if (serviceMrns == null || serviceMrns.isEmpty()) {
-            return endorsementLists;
-        }
-        for(String serviceMrn : serviceMrns) {
-            EndorsementList endorsementList = new EndorsementList();
-            endorsementList.setServiceMrn(serviceMrn);
-            endorsementList.setEndorsements(endorsementService.listByServiceMrn(serviceMrn));
-            endorsementLists.add(endorsementList);
-        }
-        return endorsementLists;
-    }*/
 
     @RequestMapping(
             value = "/endorsements-by/{serviceLevel}/{orgMrn}",
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public Page<Endorsement> getEndormentsByOrgMrn(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String orgMrn, Pageable pageable) {
+    public Page<Endorsement> getEndorsementsByOrgMrn(HttpServletRequest request, @PathVariable String serviceLevel, @PathVariable String orgMrn, Pageable pageable) {
         return endorsementService.listByOrgMrnAndServiceLevel(orgMrn, serviceLevel, pageable);
     }
 
@@ -114,7 +93,7 @@ public class EndorseController {
             method = RequestMethod.DELETE)
     @ResponseBody
     @PreAuthorize("@accessControlUtil.hasAccessToOrg(#orgMrn)")
-    public ResponseEntity<?> deleteEndorment(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String serviceVersion, @PathVariable String orgMrn) {
+    public ResponseEntity<?> deleteEndorsement(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String serviceVersion, @PathVariable String orgMrn) {
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion(orgMrn, serviceMrn, serviceVersion);
         if (endorsement == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -128,7 +107,7 @@ public class EndorseController {
             method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public ResponseEntity<?> getEndorsment(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String serviceVersion, @PathVariable String orgMrn) {
+    public ResponseEntity<?> getEndorsement(HttpServletRequest request, @PathVariable String serviceMrn, @PathVariable String serviceVersion, @PathVariable String orgMrn) {
         Endorsement endorsement = this.endorsementService.getByOrgMrnAndServiceMrnAndServiceVersion(orgMrn, serviceMrn, serviceVersion);
         if (endorsement == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
