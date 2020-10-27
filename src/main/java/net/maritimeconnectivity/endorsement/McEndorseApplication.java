@@ -16,10 +16,13 @@
 
 package net.maritimeconnectivity.endorsement;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+import java.security.Security;
 
 @SpringBootApplication
 public class McEndorseApplication extends SpringBootServletInitializer {
@@ -33,7 +36,7 @@ public class McEndorseApplication extends SpringBootServletInitializer {
         // Set awt to be headless to avoid issues when scaling images (logos)
         //System.setProperty("java.awt.headless", "true");
         // Set Bouncy Castle as Provider, used for Certificates.
-        //Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastleProvider());
         SpringApplication.run(McEndorseApplication.class, args);
     }
 
